@@ -1,62 +1,40 @@
 import React from "react";
+import { MovieContext } from "./MovieContext";
 
-export const MovieContext = React.createContext();
-
-class MovieProvider extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      movies: [
-        {
-          id: 1,
-          title: "The Shawshank Redemption",
-          year: 1994,
-          director: "Frank Darabont",
-        },
-        {
-          id: 2,
-          title: "The Godfather",
-          year: 1972,
-          director: "Francis Ford Coppola",
-        },
-        {
-          id: 3,
-          title: "The Godfather: Part II",
-          year: 1974,
-          director: "Francis Ford Coppola",
-        },
-        {
-          id: 4,
-          title: "The Dark Knight",
-          year: 2008,
-          director: "Christopher Nolan",
-        },
-        {
-          id: 5,
-          title: "12 Angry",
-          year: 1957,
-          director: "Sidney Lumet",
-        },
-      ],
-      selectedMovieId: -1,
-      changeSelectedMovieId: () => {},
-    };
-  }
+class MoviesList extends React.Component {
+  static contextType = MovieContext;
 
   render() {
-    console.log(this.state.selectedMovieId);
+    const {movies, setState} =  this.context;
+
+    const handleOnClick = (id) => {
+      setState((state) => ({...state, selectedMovieId: id }));
+    }
+
     return (
-      <MovieContext.Provider
-        value={{
-          movies: this.state.movies,
-          selectedMovieId: this.state.selectedMovieId,
-          setState: this.setState.bind(this),
-        }}
-      >
-        {this.props.children}
-      </MovieContext.Provider>
+      <div id="movies-table">
+        <style>{
+        `
+        td { padding : 20px; }
+        tr:hover { background: #3374C2}
+        `}</style>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+            </tr>
+          </thead>
+          <tbody>
+            {movies.map((movie) => (
+              <tr id={`table-row-${movie.id}`} key={movie.id} onClick={() => handleOnClick(movie.id)}>
+                <td>{movie.title}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     );
   }
 }
 
-export default MovieProvider;
+export default MoviesList;
